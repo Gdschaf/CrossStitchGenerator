@@ -1,0 +1,93 @@
+.shape-legend {
+  margin: 20px 0;
+  padding: 20px;
+  border: 2px solid #4CAF50;
+  border-radius: 8px;
+  background-color: #f9fff9;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.shape-legend h3 {
+  margin: 0 0 8px 0;
+  font-size: 18px;
+  color: #333;
+  font-weight: bold;
+}
+
+.legend-description {
+  margin: 0 0 16px 0;
+  font-size: 14px;
+  color: #666;
+  font-style: italic;
+}
+
+.empty-message {
+  color: #666;
+  font-style: italic;
+}
+
+.legend-items {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+}
+
+.legend-item:last-child {
+  border-bottom: none;
+}
+
+.shape-display {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #333;
+  border-radius: 4px;
+  background-color: white;
+  flex-shrink: 0;
+  font-weight: bold;
+}
+
+.shape-symbol {
+  font-size: 20px;
+  line-height: 1;
+  font-weight: bold;
+  color: #333;
+}
+
+.legend-item .color-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.legend-item .dmc-number {
+  font-weight: bold;
+  color: #333;
+  font-size: 14px;
+}
+
+.legend-item .color-name {
+  font-size: 12px;
+  color: #666;
+}
+
+.legend-item .color-swatch {
+  width: 30px;
+  height: 30px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  flex-shrink: 0;
+}

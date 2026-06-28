@@ -1,0 +1,350 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #f5f5f5;
+}
+
+/* Full-viewport layout — header stays fixed, sidebar + content fill remaining height */
+html, body, #root {
+  height: 100%;
+  overflow: hidden;
+}
+
+.app {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-header {
+  flex-shrink: 0;
+  background-color: #4CAF50;
+  color: white;
+  padding: 16px 20px;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  z-index: 10;
+}
+
+.app-header h1 {
+  margin: 0 0 4px 0;
+  font-size: 28px;
+}
+
+.app-header p {
+  margin: 0;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+/* Main row fills remaining viewport height, no overflow at this level */
+.app-main {
+  flex: 1;
+  display: flex;
+  min-height: 0; /* required: lets flex children shrink below content size */
+  gap: 0;
+}
+
+/* Sidebar scrolls independently */
+.app-sidebar {
+  flex-shrink: 0;
+  overflow-y: auto;
+  padding: 16px;
+  border-right: 1px solid hsl(var(--border));
+  background: hsl(var(--background));
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+  min-width: 220px;
+  max-width: 600px;
+}
+
+/* Drag handle on the right edge of the sidebar */
+.sidebar-resize-handle {
+  position: absolute;
+  top: 0;
+  right: -4px;
+  width: 8px;
+  height: 100%;
+  cursor: col-resize;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebar-resize-handle::after {
+  content: '';
+  display: block;
+  width: 3px;
+  height: 40px;
+  border-radius: 2px;
+  background: hsl(var(--border));
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.sidebar-resize-handle:hover::after,
+.sidebar-resize-handle.dragging::after {
+  opacity: 1;
+  background: hsl(var(--primary));
+}
+
+/* Pattern area fills remaining width, scrolls independently when content overflows */
+.app-content {
+  flex: 1;
+  min-width: 0;
+  overflow: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: #f5f5f5;
+}
+
+/* When content overflows (zoomed in), anchor to top-left so scrollbars appear */
+.app-content.overflowing {
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  font-size: 18px;
+  color: #666;
+  gap: 20px;
+}
+
+@media (max-width: 768px) {
+  html, body, #root {
+    overflow: auto;
+  }
+
+  .app {
+    height: auto;
+    min-height: 100%;
+  }
+
+  .app-main {
+    flex-direction: column;
+  }
+
+  .app-sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid hsl(var(--border));
+    overflow-y: visible;
+  }
+
+  .app-content {
+    min-height: 400px;
+  }
+}
+
+/* ── Print Preview ─────────────────────────────────────────────────── */
+
+/* Hidden on screen, shown on print */
+.pp-print-only {
+  display: none;
+}
+
+/* Full-screen modal overlay */
+.pp-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+}
+
+.pp-panel {
+  background: white;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.pp-panel-header {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 20px;
+  border-bottom: 1px solid #ddd;
+  background: white;
+}
+
+/* Scrollable page preview area */
+.pp-scroll {
+  flex: 1;
+  overflow-y: auto;
+  background: #d0d0d0;
+  padding: 28px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+}
+
+.pp-preview-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.pp-preview-label {
+  font-size: 11px;
+  color: #888;
+  font-family: sans-serif;
+}
+
+/* Clipping container at scaled size */
+.pp-preview-outer {
+  width: calc(720px * 0.52);   /* ≈374px */
+  height: calc(960px * 0.52);  /* ≈499px */
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+  background: white;
+  flex-shrink: 0;
+}
+
+/* Scale the print page content down for preview */
+.pp-preview-inner {
+  transform: scale(0.52);
+  transform-origin: top left;
+  width: 720px;
+  min-height: 960px;
+}
+
+/* ── Print page layout ─────────────────────────────────────────────── */
+.pp-page {
+  width: 720px;
+  min-height: 960px;
+  padding: 40px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  background: white;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.pp-page-header {
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #333;
+  flex-shrink: 0;
+}
+
+.pp-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: #111;
+}
+
+.pp-subtitle {
+  font-size: 12px;
+  color: #555;
+  margin-top: 3px;
+}
+
+.pp-color-preview-area {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 0;
+}
+
+.pp-page-footer {
+  flex-shrink: 0;
+  text-align: center;
+  font-size: 10px;
+  color: #999;
+  padding-top: 8px;
+  border-top: 1px solid #eee;
+  margin-top: 8px;
+}
+
+.pp-chunk-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 4px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #ccc;
+  flex-shrink: 0;
+}
+
+.pp-chunk-title {
+  font-size: 12px;
+  font-weight: bold;
+  color: #333;
+}
+
+.pp-page-footer-inline {
+  font-size: 10px;
+  color: #999;
+}
+
+/* ── Print media ───────────────────────────────────────────────────── */
+@media print {
+  @page {
+    size: letter;
+    margin: 0.5in;
+  }
+
+  html, body, #root {
+    overflow: visible !important;
+    height: auto !important;
+  }
+
+  /* Force the browser to print background colors and images as-is.
+     Without this, browsers strip all background-color on print by default,
+     which removes cell tints, color swatches, and shopping list chips. */
+  .pp-print-only * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Show print pages, hide everything else.
+     NOTE: .app must NOT be hidden — .pp-print-only is a child of .app and
+     display:none on a parent overrides display:block on any child. */
+  .pp-print-only {
+    display: block !important;
+  }
+
+  .no-print,
+  .app-header,
+  .app-main {
+    display: none !important;
+  }
+
+  /* Each page breaks correctly */
+  .pp-page {
+    width: 100%;
+    min-height: 0;
+    padding: 0;
+    page-break-after: always;
+    break-after: page;
+  }
+
+  .pp-page:last-child {
+    page-break-after: auto;
+    break-after: auto;
+  }
+}
