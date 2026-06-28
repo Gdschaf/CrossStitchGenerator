@@ -1,0 +1,20 @@
+name: Promote to Production
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Force-push main to production
+        run: git push origin HEAD:production --force
