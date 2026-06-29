@@ -1,29 +1,31 @@
 .color-library {
   margin: 20px 0;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border);
   border-radius: 8px;
-  background-color: white;
+  background-color: var(--card);
 }
 
 .color-library-toggle {
   width: 100%;
   padding: 12px;
-  background-color: #f8f8f8;
+  background-color: var(--muted);
   border: none;
   border-radius: 8px 8px 0 0;
   cursor: pointer;
-  font-size: 16px;
-  font-weight: bold;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: 'Geist Variable', system-ui, sans-serif;
   text-align: left;
-  color: #333;
+  color: var(--foreground);
+  transition: background-color 0.15s;
 }
 
 .color-library-toggle:hover {
-  background-color: #e8e8e8;
+  background-color: var(--accent);
 }
 
 .color-library-content {
-  padding: 20px;
+  padding: 16px;
   max-height: 500px;
   overflow-y: auto;
 }
@@ -37,7 +39,7 @@
   align-items: center;
   gap: 12px;
   padding: 8px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--border);
 }
 
 .color-item:last-child {
@@ -47,7 +49,7 @@
 .color-swatch {
   width: 40px;
   height: 40px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border);
   border-radius: 4px;
   flex-shrink: 0;
 }
@@ -60,13 +62,13 @@
 }
 
 .color-number {
-  font-weight: bold;
-  color: #333;
+  font-weight: 600;
+  color: var(--foreground);
 }
 
 .color-name {
   font-size: 14px;
-  color: #666;
+  color: var(--muted-foreground);
 }
 
 .color-actions {
@@ -75,28 +77,31 @@
 }
 
 .color-actions button {
-  padding: 6px 12px;
-  border: 1px solid #ddd;
+  padding: 5px 10px;
+  border: 1px solid var(--border);
   border-radius: 4px;
-  background-color: white;
-  color: #333;
+  background-color: var(--background);
+  color: var(--foreground);
   cursor: pointer;
   font-size: 12px;
+  font-family: 'Geist Variable', system-ui, sans-serif;
+  transition: background-color 0.15s;
 }
 
 .color-actions button:hover {
-  background-color: #f0f0f0;
+  background-color: var(--muted);
 }
 
 .color-library-add {
-  border-top: 2px solid #eee;
-  padding-top: 20px;
+  border-top: 2px solid var(--border);
+  padding-top: 16px;
 }
 
 .color-library-add h3 {
   margin: 0 0 12px 0;
-  font-size: 18px;
-  color: #333;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--foreground);
 }
 
 .add-color-form {
@@ -108,9 +113,12 @@
 .add-color-form input[type="text"],
 .add-color-form input[type="number"] {
   padding: 8px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--input);
   border-radius: 4px;
   font-size: 14px;
+  font-family: 'Geist Variable', system-ui, sans-serif;
+  background-color: var(--background);
+  color: var(--foreground);
 }
 
 .rgb-inputs {
@@ -120,9 +128,9 @@
 }
 
 .rgb-inputs label {
-  font-weight: bold;
+  font-weight: 600;
   min-width: 20px;
-  color: #333;
+  color: var(--foreground);
 }
 
 .rgb-inputs input {
@@ -132,29 +140,32 @@
 .color-preview {
   width: 100%;
   height: 50px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border);
   border-radius: 4px;
 }
 
 .add-color-form button {
-  padding: 10px;
+  padding: 9px;
   border: none;
-  border-radius: 4px;
-  background-color: #4CAF50;
-  color: white;
+  border-radius: 6px;
+  background-color: var(--brand);
+  color: var(--brand-foreground);
   cursor: pointer;
   font-size: 14px;
-  font-weight: bold;
+  font-weight: 500;
+  font-family: 'Geist Variable', system-ui, sans-serif;
+  transition: background-color 0.15s;
 }
 
 .add-color-form button:hover {
-  background-color: #45a049;
+  background-color: var(--brand-hover);
 }
 
 .add-color-form button:last-of-type {
-  background-color: #666;
+  background-color: var(--secondary);
+  color: var(--secondary-foreground);
 }
 
 .add-color-form button:last-of-type:hover {
-  background-color: #555;
+  background-color: var(--muted);
 }

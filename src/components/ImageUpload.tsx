@@ -3,9 +3,10 @@ import './ImageUpload.css';
 
 interface ImageUploadProps {
   onImageUpload: (file: File) => void;
+  className?: string;
 }
 
-export const ImageUpload: React.FC<ImageUploadProps> = ({ onImageUpload }) => {
+export const ImageUpload: React.FC<ImageUploadProps> = ({ onImageUpload, className }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -28,8 +29,8 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({ onImageUpload }) => {
   };
 
   return (
-    <div 
-      className="image-upload"
+    <div
+      className={`image-upload${className ? ` ${className}` : ''}`}
       onDrop={handleDrop}
       onDragOver={handleDragOver}
     >

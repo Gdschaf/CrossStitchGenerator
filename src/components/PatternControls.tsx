@@ -167,9 +167,7 @@ export function PatternControls({
         </div>
 
         <p className="text-xs text-muted-foreground">
-          {patternWidth} × {patternHeight} stitches
-          &nbsp;·&nbsp;
-          {inchesW}" × {inchesH}" on {clothCount}-count
+          {patternWidth} × {patternHeight} stitches · {inchesW}" × {inchesH}" on {clothCount}-count
         </p>
       </div>
 

@@ -5,41 +5,48 @@
 }
 
 .upload-area {
-  border: 2px dashed #ccc;
+  border: 2px dashed var(--border);
   border-radius: 8px;
   padding: 40px;
   text-align: center;
-  background-color: #fafafa;
-  transition: all 0.3s;
+  background-color: var(--muted);
+  transition: all 0.2s;
 }
 
 .upload-area:hover {
-  border-color: #4CAF50;
-  background-color: #f0f0f0;
+  border-color: var(--brand);
+  background-color: var(--brand-subtle);
 }
 
 .upload-area p {
   margin: 10px 0;
-  color: #666;
+  color: var(--muted-foreground);
 }
 
 .upload-area button {
-  padding: 12px 24px;
-  background-color: #4CAF50;
-  color: white;
+  padding: 10px 22px;
+  background-color: var(--brand);
+  color: var(--brand-foreground);
   border: none;
-  border-radius: 4px;
-  font-size: 16px;
+  border-radius: 6px;
+  font-size: 15px;
+  font-family: 'Geist Variable', system-ui, sans-serif;
+  font-weight: 500;
   cursor: pointer;
   margin: 10px 0;
+  transition: background-color 0.15s;
 }
 
 .upload-area button:hover {
-  background-color: #45a049;
+  background-color: var(--brand-hover);
+}
+
+.image-upload.sidebar-upload {
+  max-width: none;
 }
 
 .upload-hint {
   font-size: 12px;
-  color: #999;
+  color: var(--muted-foreground);
   margin-top: 10px;
 }

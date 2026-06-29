@@ -254,7 +254,7 @@ function App() {
               className={`sidebar-resize-handle${isResizingSidebar ? ' dragging' : ''}`}
               onMouseDown={handleSidebarResizeStart}
             />
-            <ImageUpload onImageUpload={handleImageUpload} />
+            <ImageUpload onImageUpload={handleImageUpload} className="sidebar-upload" />
 
             <Button
               variant="outline"
@@ -313,12 +313,12 @@ function App() {
                 </div>
 
                 {/* Zoom controls */}
-                <div className="flex items-center gap-2 mt-2">
+                <div className="flex items-center gap-2 mt-2 w-full">
                   <span className="text-xs text-muted-foreground flex-shrink-0">Zoom</span>
-                  <Button variant="outline" size="sm" className="h-7 w-7 p-0" onClick={handleZoomOut} title="Zoom Out">−</Button>
-                  <span className="text-xs font-semibold tabular-nums text-center w-10">{Math.round(zoomLevel * 100)}%</span>
-                  <Button variant="outline" size="sm" className="h-7 w-7 p-0" onClick={handleZoomIn} title="Zoom In">+</Button>
-                  <Button variant="outline" size="sm" className="h-7 text-xs px-2" onClick={handleZoomReset}>Reset</Button>
+                  <Button variant="outline" size="sm" className="h-7 w-7 p-0 flex-shrink-0" onClick={handleZoomOut} title="Zoom Out">−</Button>
+                  <span className="text-xs font-semibold tabular-nums text-center flex-1">{Math.round(zoomLevel * 100)}%</span>
+                  <Button variant="outline" size="sm" className="h-7 w-7 p-0 flex-shrink-0" onClick={handleZoomIn} title="Zoom In">+</Button>
+                  <Button variant="outline" size="sm" className="h-7 text-xs px-2 flex-shrink-0" onClick={handleZoomReset}>Reset</Button>
                 </div>
 
                 <Separator className="my-2" />

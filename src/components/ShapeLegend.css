@@ -1,28 +1,28 @@
 .shape-legend {
   margin: 20px 0;
-  padding: 20px;
-  border: 2px solid #4CAF50;
+  padding: 16px;
+  border: 1px solid var(--brand);
   border-radius: 8px;
-  background-color: #f9fff9;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  background-color: var(--brand-subtle);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
 }
 
 .shape-legend h3 {
   margin: 0 0 8px 0;
-  font-size: 18px;
-  color: #333;
-  font-weight: bold;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--foreground);
 }
 
 .legend-description {
-  margin: 0 0 16px 0;
-  font-size: 14px;
-  color: #666;
+  margin: 0 0 14px 0;
+  font-size: 13px;
+  color: var(--muted-foreground);
   font-style: italic;
 }
 
 .empty-message {
-  color: #666;
+  color: var(--muted-foreground);
   font-style: italic;
 }
 
@@ -39,7 +39,7 @@
   align-items: center;
   gap: 12px;
   padding: 8px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--border);
 }
 
 .legend-item:last-child {
@@ -52,9 +52,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid #333;
+  border: 2px solid var(--foreground);
   border-radius: 4px;
-  background-color: white;
+  background-color: var(--background);
   flex-shrink: 0;
   font-weight: bold;
 }
@@ -63,7 +63,7 @@
   font-size: 20px;
   line-height: 1;
   font-weight: bold;
-  color: #333;
+  color: var(--foreground);
 }
 
 .legend-item .color-details {
@@ -74,20 +74,20 @@
 }
 
 .legend-item .dmc-number {
-  font-weight: bold;
-  color: #333;
+  font-weight: 600;
+  color: var(--foreground);
   font-size: 14px;
 }
 
 .legend-item .color-name {
   font-size: 12px;
-  color: #666;
+  color: var(--muted-foreground);
 }
 
 .legend-item .color-swatch {
   width: 30px;
   height: 30px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border);
   border-radius: 4px;
   flex-shrink: 0;
 }

@@ -1,19 +1,20 @@
 .shopping-list {
   margin: 20px 0;
-  padding: 20px;
-  border: 1px solid #ddd;
+  padding: 16px;
+  border: 1px solid var(--border);
   border-radius: 8px;
-  background-color: white;
+  background-color: var(--card);
 }
 
 .shopping-list h3 {
-  margin: 0 0 16px 0;
-  font-size: 18px;
-  color: #333;
+  margin: 0 0 14px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--foreground);
 }
 
 .empty-message {
-  color: #666;
+  color: var(--muted-foreground);
   font-style: italic;
 }
 
@@ -30,7 +31,7 @@
   align-items: center;
   gap: 12px;
   padding: 8px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--border);
 }
 
 .shopping-list-item:last-child {
@@ -40,7 +41,7 @@
 .shopping-list-item .color-swatch {
   width: 30px;
   height: 30px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border);
   border-radius: 4px;
   flex-shrink: 0;
 }
@@ -52,12 +53,12 @@
 }
 
 .shopping-list-item .dmc-number {
-  font-weight: bold;
-  color: #333;
+  font-weight: 600;
+  color: var(--foreground);
   font-size: 14px;
 }
 
 .shopping-list-item .color-name {
   font-size: 12px;
-  color: #666;
+  color: var(--muted-foreground);
 }

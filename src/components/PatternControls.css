@@ -1,15 +1,16 @@
 .pattern-controls {
   margin: 20px 0;
-  padding: 20px;
-  border: 1px solid #ddd;
+  padding: 16px;
+  border: 1px solid var(--border);
   border-radius: 8px;
-  background-color: white;
+  background-color: var(--card);
 }
 
 .pattern-controls h3 {
-  margin: 0 0 16px 0;
-  font-size: 18px;
-  color: #333;
+  margin: 0 0 14px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--foreground);
 }
 
 .control-group {
@@ -23,18 +24,22 @@
   flex-direction: column;
   gap: 8px;
   font-weight: 500;
-  color: #333;
+  color: var(--foreground);
 }
 
 .control-group input {
-  padding: 8px;
-  border: 1px solid #ddd;
+  padding: 7px 8px;
+  border: 1px solid var(--input);
   border-radius: 4px;
   font-size: 14px;
+  font-family: 'Geist Variable', system-ui, sans-serif;
+  background-color: var(--background);
+  color: var(--foreground);
   width: 120px;
 }
 
 .control-group input:focus {
   outline: none;
-  border-color: #4CAF50;
+  border-color: var(--brand);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--brand) 20%, transparent);
 }

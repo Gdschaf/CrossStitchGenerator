@@ -88,7 +88,6 @@ export async function generatePattern(
           return;
         }
 
-        // Keep the top N colors by pixel count
         const ranked = enabledColors
           .filter(c => usageCount.has(c.number))
           .sort((a, b) => (usageCount.get(b.number) ?? 0) - (usageCount.get(a.number) ?? 0));

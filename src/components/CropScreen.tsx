@@ -11,7 +11,7 @@ interface CropScreenProps {
 
 type Handle = 'nw' | 'n' | 'ne' | 'e' | 'se' | 's' | 'sw' | 'w' | 'move';
 
-const HANDLE_PX = 10;
+const HANDLE_PX = 18;
 const MIN_CROP = 0.01;
 
 export function CropScreen({ imageFile, initialCrop, onConfirm, onCancel }: CropScreenProps) {
@@ -42,7 +42,7 @@ export function CropScreen({ imageFile, initialCrop, onConfirm, onCancel }: Crop
       if (!el) return;
       const maxW = el.clientWidth - 48;
       const maxH = el.clientHeight - 48;
-      const scale = Math.min(maxW / imageDims.w, maxH / imageDims.h, 1);
+      const scale = Math.min(maxW / imageDims.w, maxH / imageDims.h);
       setDisplayDims({ w: Math.round(imageDims.w * scale), h: Math.round(imageDims.h * scale) });
     };
     compute();
@@ -50,12 +50,11 @@ export function CropScreen({ imageFile, initialCrop, onConfirm, onCancel }: Crop
     return () => window.removeEventListener('resize', compute);
   }, [imageDims]);
 
-  // Drag: mouse move + up on window
-  const handleMouseMove = useCallback((e: MouseEvent) => {
+  const applyDrag = useCallback((clientX: number, clientY: number) => {
     if (!dragRef.current || !displayDims.w) return;
     const { handle, startMouse, startCrop } = dragRef.current;
-    const dx = (e.clientX - startMouse.x) / displayDims.w;
-    const dy = (e.clientY - startMouse.y) / displayDims.h;
+    const dx = (clientX - startMouse.x) / displayDims.w;
+    const dy = (clientY - startMouse.y) / displayDims.h;
 
     setCrop(() => {
       let { x, y, width, height } = startCrop;
@@ -65,14 +64,12 @@ export function CropScreen({ imageFile, initialCrop, onConfirm, onCancel }: Crop
       } else {
         if (handle.includes('w')) {
           const nx = Math.max(0, Math.min(x + width - MIN_CROP, x + dx));
-          width = width + (x - nx);
-          x = nx;
+          width = width + (x - nx); x = nx;
         }
         if (handle.includes('e')) width = Math.max(MIN_CROP, Math.min(1 - x, width + dx));
         if (handle.includes('n')) {
           const ny = Math.max(0, Math.min(y + height - MIN_CROP, y + dy));
-          height = height + (y - ny);
-          y = ny;
+          height = height + (y - ny); y = ny;
         }
         if (handle.includes('s')) height = Math.max(MIN_CROP, Math.min(1 - y, height + dy));
       }
@@ -80,21 +77,39 @@ export function CropScreen({ imageFile, initialCrop, onConfirm, onCancel }: Crop
     });
   }, [displayDims]);
 
-  const handleMouseUp = useCallback(() => { dragRef.current = null; }, []);
+  const handleMouseMove = useCallback((e: MouseEvent) => applyDrag(e.clientX, e.clientY), [applyDrag]);
+  const handleTouchMove = useCallback((e: TouchEvent) => {
+    e.preventDefault();
+    if (e.touches[0]) applyDrag(e.touches[0].clientX, e.touches[0].clientY);
+  }, [applyDrag]);
+
+  const endDrag = useCallback(() => { dragRef.current = null; }, []);
 
   useEffect(() => {
     window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('mouseup', handleMouseUp);
+    window.addEventListener('mouseup', endDrag);
+    window.addEventListener('touchmove', handleTouchMove, { passive: false });
+    window.addEventListener('touchend', endDrag);
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseup', handleMouseUp);
+      window.removeEventListener('mouseup', endDrag);
+      window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('touchend', endDrag);
     };
-  }, [handleMouseMove, handleMouseUp]);
+  }, [handleMouseMove, handleTouchMove, endDrag]);
 
   const startDrag = (e: React.MouseEvent, handle: Handle) => {
     e.preventDefault();
     e.stopPropagation();
     dragRef.current = { handle, startMouse: { x: e.clientX, y: e.clientY }, startCrop: { ...crop } };
+  };
+
+  const startDragTouch = (e: React.TouchEvent, handle: Handle) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.touches[0]) {
+      dragRef.current = { handle, startMouse: { x: e.touches[0].clientX, y: e.touches[0].clientY }, startCrop: { ...crop } };
+    }
   };
 
   // Auto-detect non-transparent content bounds by scanning a downsampled canvas
@@ -104,7 +119,6 @@ export function CropScreen({ imageFile, initialCrop, onConfirm, onCancel }: Crop
     try {
       const img = new Image();
       await new Promise<void>((res, rej) => { img.onload = () => res(); img.onerror = rej; img.src = imageUrl; });
-
       const SCAN = 400;
       const scale = Math.min(SCAN / img.width, SCAN / img.height, 1);
       const sw = Math.round(img.width * scale);
@@ -114,7 +128,6 @@ export function CropScreen({ imageFile, initialCrop, onConfirm, onCancel }: Crop
       const ctx = canvas.getContext('2d')!;
       ctx.drawImage(img, 0, 0, sw, sh);
       const { data } = ctx.getImageData(0, 0, sw, sh);
-
       let minX = sw, maxX = 0, minY = sh, maxY = 0, hasContent = false;
       for (let y = 0; y < sh; y++) {
         for (let x = 0; x < sw; x++) {
@@ -125,11 +138,9 @@ export function CropScreen({ imageFile, initialCrop, onConfirm, onCancel }: Crop
           }
         }
       }
-
       if (hasContent) {
         setCrop({
-          x: minX / sw,
-          y: minY / sh,
+          x: minX / sw, y: minY / sh,
           width: (maxX - minX + 1) / sw,
           height: (maxY - minY + 1) / sh,
         });
@@ -139,7 +150,7 @@ export function CropScreen({ imageFile, initialCrop, onConfirm, onCancel }: Crop
     }
   };
 
-  // Crop in display pixels (for positioning overlays and handles)
+  // Crop in display pixels
   const cd = {
     x: crop.x * displayDims.w,
     y: crop.y * displayDims.h,
@@ -156,14 +167,14 @@ export function CropScreen({ imageFile, initialCrop, onConfirm, onCancel }: Crop
   } : null;
 
   const handles: { id: Handle; cursor: string; left: number; top: number }[] = [
-    { id: 'nw', cursor: 'nw-resize', left: cd.x - HANDLE_PX / 2,           top: cd.y - HANDLE_PX / 2 },
-    { id: 'n',  cursor: 'n-resize',  left: cd.x + cd.w / 2 - HANDLE_PX / 2, top: cd.y - HANDLE_PX / 2 },
-    { id: 'ne', cursor: 'ne-resize', left: cd.x + cd.w - HANDLE_PX / 2,    top: cd.y - HANDLE_PX / 2 },
-    { id: 'e',  cursor: 'e-resize',  left: cd.x + cd.w - HANDLE_PX / 2,    top: cd.y + cd.h / 2 - HANDLE_PX / 2 },
-    { id: 'se', cursor: 'se-resize', left: cd.x + cd.w - HANDLE_PX / 2,    top: cd.y + cd.h - HANDLE_PX / 2 },
-    { id: 's',  cursor: 's-resize',  left: cd.x + cd.w / 2 - HANDLE_PX / 2, top: cd.y + cd.h - HANDLE_PX / 2 },
-    { id: 'sw', cursor: 'sw-resize', left: cd.x - HANDLE_PX / 2,           top: cd.y + cd.h - HANDLE_PX / 2 },
-    { id: 'w',  cursor: 'w-resize',  left: cd.x - HANDLE_PX / 2,           top: cd.y + cd.h / 2 - HANDLE_PX / 2 },
+    { id: 'nw', cursor: 'nw-resize', left: cd.x - HANDLE_PX / 2,                top: cd.y - HANDLE_PX / 2 },
+    { id: 'n',  cursor: 'n-resize',  left: cd.x + cd.w / 2 - HANDLE_PX / 2,     top: cd.y - HANDLE_PX / 2 },
+    { id: 'ne', cursor: 'ne-resize', left: cd.x + cd.w - HANDLE_PX / 2,          top: cd.y - HANDLE_PX / 2 },
+    { id: 'e',  cursor: 'e-resize',  left: cd.x + cd.w - HANDLE_PX / 2,          top: cd.y + cd.h / 2 - HANDLE_PX / 2 },
+    { id: 'se', cursor: 'se-resize', left: cd.x + cd.w - HANDLE_PX / 2,          top: cd.y + cd.h - HANDLE_PX / 2 },
+    { id: 's',  cursor: 's-resize',  left: cd.x + cd.w / 2 - HANDLE_PX / 2,      top: cd.y + cd.h - HANDLE_PX / 2 },
+    { id: 'sw', cursor: 'sw-resize', left: cd.x - HANDLE_PX / 2,                 top: cd.y + cd.h - HANDLE_PX / 2 },
+    { id: 'w',  cursor: 'w-resize',  left: cd.x - HANDLE_PX / 2,                 top: cd.y + cd.h / 2 - HANDLE_PX / 2 },
   ];
 
   return (
@@ -198,25 +209,20 @@ export function CropScreen({ imageFile, initialCrop, onConfirm, onCancel }: Crop
       <div ref={containerRef} style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', padding: 24 }}>
         {imageUrl && displayDims.w > 0 && (
           <div style={{ position: 'relative', width: displayDims.w, height: displayDims.h, userSelect: 'none' }}>
-            {/* Image */}
             <img src={imageUrl} style={{ width: displayDims.w, height: displayDims.h, display: 'block' }} draggable={false} />
 
             {/* Dark overlay strips outside crop */}
-            {/* Top */}
             <div style={{ position: 'absolute', left: 0, top: 0, width: '100%', height: cd.y, background: 'rgba(0,0,0,0.6)', pointerEvents: 'none' }} />
-            {/* Bottom */}
             <div style={{ position: 'absolute', left: 0, top: cd.y + cd.h, width: '100%', height: displayDims.h - cd.y - cd.h, background: 'rgba(0,0,0,0.6)', pointerEvents: 'none' }} />
-            {/* Left */}
             <div style={{ position: 'absolute', left: 0, top: cd.y, width: cd.x, height: cd.h, background: 'rgba(0,0,0,0.6)', pointerEvents: 'none' }} />
-            {/* Right */}
             <div style={{ position: 'absolute', left: cd.x + cd.w, top: cd.y, width: displayDims.w - cd.x - cd.w, height: cd.h, background: 'rgba(0,0,0,0.6)', pointerEvents: 'none' }} />
 
             {/* Crop border + move handle */}
             <div
-              style={{ position: 'absolute', left: cd.x, top: cd.y, width: cd.w, height: cd.h, border: '1.5px solid white', boxSizing: 'border-box', cursor: 'move' }}
+              style={{ position: 'absolute', left: cd.x, top: cd.y, width: cd.w, height: cd.h, border: '1.5px solid white', boxSizing: 'border-box', cursor: 'move', touchAction: 'none' }}
               onMouseDown={e => startDrag(e, 'move')}
+              onTouchStart={e => startDragTouch(e, 'move')}
             >
-              {/* Rule-of-thirds guides */}
               {(['33.33%', '66.66%'] as const).map(p => (
                 <div key={`v${p}`} style={{ position: 'absolute', left: p, top: 0, bottom: 0, width: 1, background: 'rgba(255,255,255,0.25)', pointerEvents: 'none' }} />
               ))}
@@ -229,8 +235,9 @@ export function CropScreen({ imageFile, initialCrop, onConfirm, onCancel }: Crop
             {handles.map(({ id, cursor, left, top }) => (
               <div
                 key={id}
-                style={{ position: 'absolute', left, top, width: HANDLE_PX, height: HANDLE_PX, background: 'white', border: '1.5px solid #333', borderRadius: 2, cursor, zIndex: 10 }}
+                style={{ position: 'absolute', left, top, width: HANDLE_PX, height: HANDLE_PX, background: 'white', border: '1.5px solid #333', borderRadius: 3, cursor, zIndex: 10, touchAction: 'none' }}
                 onMouseDown={e => startDrag(e, id)}
+                onTouchStart={e => startDragTouch(e, id)}
               />
             ))}
           </div>

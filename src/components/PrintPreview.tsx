@@ -1,4 +1,4 @@
-import { useMemo, useRef, useEffect } from 'react';
+import { useMemo, useRef, useEffect, useState } from 'react';
 import { Pattern, DMCColor } from '../types';
 import { getShapeForColor } from '../utils/shapeMapping';
 import { Button } from '@/components/ui/button';
@@ -80,8 +80,17 @@ function ColorPreviewCanvas({ pattern, availW, availH }: { pattern: Pattern; ava
 }
 
 // ─── Main component ──────────────────────────────────────────────────────────
+const BASE_SCALE = 0.52;
+const SCALE_STEP = 0.1;
+const MIN_SCALE = 0.2;
+const MAX_SCALE = 2.0;
+
 export function PrintPreview({ pattern, shapeMap, clothCount, onClose }: PrintPreviewProps) {
   const { width, height } = pattern;
+  const [previewScale, setPreviewScale] = useState(BASE_SCALE);
+  const zoomIn = () => setPreviewScale(s => Math.min(MAX_SCALE, Math.round((s + SCALE_STEP) * 10) / 10));
+  const zoomOut = () => setPreviewScale(s => Math.max(MIN_SCALE, Math.round((s - SCALE_STEP) * 10) / 10));
+  const zoomReset = () => setPreviewScale(BASE_SCALE);
 
   const entries = useMemo<ColorEntry[]>(() => {
     const countMap = new Map<string, { color: DMCColor; count: number }>();
@@ -390,7 +399,11 @@ export function PrintPreview({ pattern, shapeMap, clothCount, onClose }: PrintPr
                 {totalPages} pages &nbsp;·&nbsp; {width} × {height} stitches &nbsp;·&nbsp; {chunks.length} pattern section{chunks.length !== 1 ? 's' : ''}
               </div>
             </div>
-            <div style={{ display: 'flex', gap: 8 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <Button variant="outline" size="sm" style={{ width: 28, height: 28, padding: 0 }} onClick={zoomOut} title="Zoom out" disabled={previewScale <= MIN_SCALE}>−</Button>
+              <span style={{ fontSize: 12, fontVariantNumeric: 'tabular-nums', minWidth: 36, textAlign: 'center' }}>{Math.round(previewScale * 100)}%</span>
+              <Button variant="outline" size="sm" style={{ width: 28, height: 28, padding: 0 }} onClick={zoomIn} title="Zoom in" disabled={previewScale >= MAX_SCALE}>+</Button>
+              <Button variant="outline" size="sm" onClick={zoomReset} style={{ fontSize: 12 }}>Reset</Button>
               <Button onClick={() => window.print()}>🖨 Print / Save as PDF</Button>
               <Button variant="outline" onClick={onClose}>Close</Button>
             </div>
@@ -401,8 +414,14 @@ export function PrintPreview({ pattern, shapeMap, clothCount, onClose }: PrintPr
             {allPageContents.map((pageContent, i) => (
               <div key={i} className="pp-preview-card">
                 <div className="pp-preview-label">Page {i + 1} of {totalPages}</div>
-                <div className="pp-preview-outer">
-                  <div className="pp-preview-inner">
+                <div
+                  className="pp-preview-outer"
+                  style={{ width: Math.round(720 * previewScale), height: Math.round(960 * previewScale) }}
+                >
+                  <div
+                    className="pp-preview-inner"
+                    style={{ transform: `scale(${previewScale})` }}
+                  >
                     {pageContent}
                   </div>
                 </div>
