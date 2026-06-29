@@ -78,3 +78,6 @@ The built files will be in the `dist` directory.
 ## License
 
 GNU General Public License v3.0
+
+---
+*Last updated: June 2026*
