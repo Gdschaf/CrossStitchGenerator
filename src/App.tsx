@@ -12,6 +12,7 @@ import { PatternKey } from './components/PatternKey';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { PrintPreview } from './components/PrintPreview';
+import { BuyMeACoffee } from './components/BuyMeACoffee';
 import './App.css';
 
 function App() {
@@ -245,6 +246,7 @@ function App() {
       <header className="app-header">
         <h1>Cross Stitch Pattern Generator</h1>
         <p>Upload an image to create a custom cross stitch pattern</p>
+        <BuyMeACoffee />
       </header>
 
       <main className="app-main" style={isResizingSidebar ? { userSelect: 'none', cursor: 'col-resize' } : undefined}>

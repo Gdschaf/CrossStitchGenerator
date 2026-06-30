@@ -30,6 +30,50 @@ html, body, #root {
   text-align: center;
   box-shadow: 0 1px 3px rgba(0,0,0,0.15);
   z-index: 10;
+  position: relative;
+}
+
+.app-header .bmc-button {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 14px 6px 10px;
+  background-color: var(--brand-foreground);
+  color: var(--brand);
+  border: 1.5px solid var(--brand);
+  border-radius: var(--radius);
+  font-family: 'Geist Variable', system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  opacity: 0.92;
+  transition: opacity 0.15s, background-color 0.15s, color 0.15s;
+}
+
+.app-header .bmc-button:hover {
+  opacity: 1;
+  background-color: var(--brand-subtle);
+}
+
+.app-header .bmc-button svg {
+  height: 20px;
+  width: auto;
+  flex-shrink: 0;
+}
+
+/* Cup outline inherits brand color via currentColor */
+.app-header .bmc-button svg path:not(.bmc-coffee) {
+  fill: var(--brand);
+}
+
+/* Coffee fill gets a warm accent */
+.app-header .bmc-button svg .bmc-coffee {
+  fill: var(--brand-hover);
 }
 
 .app-header h1 {
