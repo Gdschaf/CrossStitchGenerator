@@ -38,6 +38,7 @@ html, body, #root {
   right: 16px;
   top: 50%;
   transform: translateY(-50%);
+  white-space: nowrap;
   display: inline-flex;
   align-items: center;
   gap: 7px;
@@ -74,6 +75,22 @@ html, body, #root {
 /* Coffee fill gets a warm accent */
 .app-header .bmc-button svg .bmc-coffee {
   fill: var(--brand-hover);
+}
+
+@media (max-width: 540px) {
+  .app-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+  }
+
+  .app-header .bmc-button {
+    position: static;
+    transform: none;
+    align-self: flex-end;
+  }
 }
 
 .app-header h1 {
