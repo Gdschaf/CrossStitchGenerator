@@ -4,6 +4,7 @@
 [![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white)](https://react.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
 [![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white)](https://vitejs.dev)
+[![shadcn/ui](https://img.shields.io/badge/shadcn%2Fui-000000?logo=shadcnui&logoColor=white)](https://ui.shadcn.com)
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-stitchnglitch.io-ff69b4)](https://stitchnglitch.io)
 
 A web application that converts images into cross stitch patterns using DMC embroidery floss colors.
