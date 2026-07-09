@@ -77,19 +77,41 @@ html, body, #root {
   fill: var(--brand-hover);
 }
 
+/* Compact header on small screens: title + coffee button in one row, tagline hidden */
 @media (max-width: 540px) {
   .app-header {
     display: flex;
-    flex-direction: column;
     align-items: center;
+    justify-content: space-between;
     gap: 10px;
-    padding: 12px 16px;
+    padding: 10px 14px;
+    text-align: left;
+  }
+
+  .app-header h1 {
+    font-size: 17px;
+  }
+
+  .app-header p {
+    display: none;
   }
 
   .app-header .bmc-button {
     position: static;
     transform: none;
-    align-self: flex-end;
+    flex-shrink: 0;
+  }
+}
+
+/* Very narrow screens: coffee button collapses to just the cup icon */
+@media (max-width: 400px) {
+  .app-header .bmc-button {
+    padding: 6px 8px;
+    gap: 0;
+  }
+
+  .app-header .bmc-button span {
+    display: none;
   }
 }
 
@@ -191,6 +213,20 @@ html, body, #root {
   gap: 20px;
 }
 
+/* Sticky view/zoom toolbar shown above the pattern on mobile (only rendered ≤768px) */
+.mobile-pattern-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--background);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 15;
+}
+
 @media (max-width: 768px) {
   html, body, #root {
     overflow: auto;
@@ -205,15 +241,35 @@ html, body, #root {
     flex-direction: column;
   }
 
-  .app-sidebar {
-    width: 100%;
-    border-right: none;
-    border-bottom: 1px solid var(--border);
-    overflow-y: visible;
+  /* Pattern first, settings below — on a phone the pattern is what you came to see */
+  .mobile-pattern-toolbar {
+    order: 1;
   }
 
   .app-content {
-    min-height: 400px;
+    order: 2;
+    min-height: min(400px, 70vh);
+    padding: 12px;
+  }
+
+  .app-sidebar {
+    order: 3;
+    width: 100%;
+    max-width: none;
+    border-right: none;
+    border-top: 1px solid var(--border);
+    overflow-y: visible;
+  }
+
+  .sidebar-resize-handle {
+    display: none;
+  }
+
+  /* iOS Safari auto-zooms focused inputs with font-size < 16px */
+  input,
+  select,
+  textarea {
+    font-size: 16px;
   }
 }
 
@@ -244,8 +300,10 @@ html, body, #root {
 .pp-panel-header {
   flex-shrink: 0;
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
+  gap: 8px;
   padding: 14px 20px;
   border-bottom: 1px solid var(--border);
   background: var(--background);
@@ -254,20 +312,34 @@ html, body, #root {
 /* Scrollable page preview area */
 .pp-scroll {
   flex: 1;
-  overflow-y: auto;
+  overflow: auto;
   background: #d0d0d0;
   padding: 28px 24px;
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: 28px;
 }
 
+/* Auto margins center the card but collapse to 0 when it overflows,
+   so the left edge stays reachable by scrolling (flex centering would clip it) */
 .pp-preview-card {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 6px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (max-width: 768px) {
+  .pp-panel-header {
+    padding: 10px 12px;
+  }
+
+  .pp-scroll {
+    padding: 16px 8px;
+    gap: 16px;
+  }
 }
 
 .pp-preview-label {

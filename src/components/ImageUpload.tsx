@@ -41,9 +41,10 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({ onImageUpload, classNa
         onChange={handleFileChange}
         style={{ display: 'none' }}
       />
-      <div className="upload-area">
+      {/* Whole area opens the picker — the button is a visual affordance whose click bubbles up */}
+      <div className="upload-area" onClick={() => fileInputRef.current?.click()}>
         <p>Drag and drop an image here, or</p>
-        <button onClick={() => fileInputRef.current?.click()}>
+        <button type="button">
           Browse Files
         </button>
         <p className="upload-hint">Supports PNG (transparency) and JPEG</p>

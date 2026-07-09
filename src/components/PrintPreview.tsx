@@ -85,12 +85,18 @@ const SCALE_STEP = 0.1;
 const MIN_SCALE = 0.2;
 const MAX_SCALE = 2.0;
 
+// Initial scale: the default, or smaller so a page fits the viewport width on phones
+const computeFitScale = () => {
+  const avail = window.innerWidth - 32; // pp-scroll horizontal padding + a little slack
+  return Math.max(MIN_SCALE, Math.min(BASE_SCALE, avail / PAGE_W));
+};
+
 export function PrintPreview({ pattern, shapeMap, clothCount, onClose }: PrintPreviewProps) {
   const { width, height } = pattern;
-  const [previewScale, setPreviewScale] = useState(BASE_SCALE);
+  const [previewScale, setPreviewScale] = useState(computeFitScale);
   const zoomIn = () => setPreviewScale(s => Math.min(MAX_SCALE, Math.round((s + SCALE_STEP) * 10) / 10));
   const zoomOut = () => setPreviewScale(s => Math.max(MIN_SCALE, Math.round((s - SCALE_STEP) * 10) / 10));
-  const zoomReset = () => setPreviewScale(BASE_SCALE);
+  const zoomReset = () => setPreviewScale(computeFitScale());
 
   const entries = useMemo<ColorEntry[]>(() => {
     const countMap = new Map<string, { color: DMCColor; count: number }>();
@@ -399,7 +405,7 @@ export function PrintPreview({ pattern, shapeMap, clothCount, onClose }: PrintPr
                 {totalPages} pages &nbsp;·&nbsp; {width} × {height} stitches &nbsp;·&nbsp; {chunks.length} pattern section{chunks.length !== 1 ? 's' : ''}
               </div>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 8 }}>
               <Button variant="outline" size="sm" style={{ width: 28, height: 28, padding: 0 }} onClick={zoomOut} title="Zoom out" disabled={previewScale <= MIN_SCALE}>−</Button>
               <span style={{ fontSize: 12, fontVariantNumeric: 'tabular-nums', minWidth: 36, textAlign: 'center' }}>{Math.round(previewScale * 100)}%</span>
               <Button variant="outline" size="sm" style={{ width: 28, height: 28, padding: 0 }} onClick={zoomIn} title="Zoom in" disabled={previewScale >= MAX_SCALE}>+</Button>

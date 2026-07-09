@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { PrintPreview } from './components/PrintPreview';
 import { BuyMeACoffee } from './components/BuyMeACoffee';
+import { useIsMobile } from './hooks/useIsMobile';
 import './App.css';
 
 function App() {
@@ -33,6 +34,7 @@ function App() {
   const [zoomLevel, setZoomLevel] = useState(1);
   const [sidebarWidth, setSidebarWidth] = useState(320);
   const [isResizingSidebar, setIsResizingSidebar] = useState(false);
+  const isMobile = useIsMobile();
   const displayContainerRef = useRef<HTMLDivElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
   const sidebarResizeRef = useRef<{ startX: number; startWidth: number } | null>(null);
@@ -251,11 +253,13 @@ function App() {
 
       <main className="app-main" style={isResizingSidebar ? { userSelect: 'none', cursor: 'col-resize' } : undefined}>
         {currentImage && (
-          <div className="app-sidebar no-print" style={{ width: sidebarWidth }}>
-            <div
-              className={`sidebar-resize-handle${isResizingSidebar ? ' dragging' : ''}`}
-              onMouseDown={handleSidebarResizeStart}
-            />
+          <div className="app-sidebar no-print" style={isMobile ? undefined : { width: sidebarWidth }}>
+            {!isMobile && (
+              <div
+                className={`sidebar-resize-handle${isResizingSidebar ? ' dragging' : ''}`}
+                onMouseDown={handleSidebarResizeStart}
+              />
+            )}
             <ImageUpload onImageUpload={handleImageUpload} className="sidebar-upload" />
 
             <Button
@@ -282,46 +286,50 @@ function App() {
 
             {pattern && (
               <>
-                <Separator className="my-2" />
+                {!isMobile && (
+                  <>
+                    <Separator className="my-2" />
 
-                {/* View toggle */}
-                <div className="flex flex-col gap-1">
-                  <div className="flex gap-2">
-                    <Button
-                      variant={viewMode === 'color' ? 'default' : 'outline'}
-                      size="sm"
-                      className="flex-1 text-xs"
-                      onClick={() => setViewMode('color')}
-                    >
-                      Color
-                    </Button>
-                    <Button
-                      variant={viewMode === 'crossstitch' ? 'default' : 'outline'}
-                      size="sm"
-                      className="flex-1 text-xs"
-                      onClick={() => setViewMode('crossstitch')}
-                    >
-                      Cross Stitch
-                    </Button>
-                    <Button
-                      variant={viewMode === 'shape' ? 'default' : 'outline'}
-                      size="sm"
-                      className="flex-1 text-xs"
-                      onClick={() => setViewMode('shape')}
-                    >
-                      Symbol
-                    </Button>
-                  </div>
-                </div>
+                    {/* View toggle */}
+                    <div className="flex flex-col gap-1">
+                      <div className="flex gap-2">
+                        <Button
+                          variant={viewMode === 'color' ? 'default' : 'outline'}
+                          size="sm"
+                          className="flex-1 text-xs"
+                          onClick={() => setViewMode('color')}
+                        >
+                          Color
+                        </Button>
+                        <Button
+                          variant={viewMode === 'crossstitch' ? 'default' : 'outline'}
+                          size="sm"
+                          className="flex-1 text-xs"
+                          onClick={() => setViewMode('crossstitch')}
+                        >
+                          Cross Stitch
+                        </Button>
+                        <Button
+                          variant={viewMode === 'shape' ? 'default' : 'outline'}
+                          size="sm"
+                          className="flex-1 text-xs"
+                          onClick={() => setViewMode('shape')}
+                        >
+                          Symbol
+                        </Button>
+                      </div>
+                    </div>
 
-                {/* Zoom controls */}
-                <div className="flex items-center gap-2 mt-2 w-full">
-                  <span className="text-xs text-muted-foreground flex-shrink-0">Zoom</span>
-                  <Button variant="outline" size="sm" className="h-7 w-7 p-0 flex-shrink-0" onClick={handleZoomOut} title="Zoom Out">−</Button>
-                  <span className="text-xs font-semibold tabular-nums text-center flex-1">{Math.round(zoomLevel * 100)}%</span>
-                  <Button variant="outline" size="sm" className="h-7 w-7 p-0 flex-shrink-0" onClick={handleZoomIn} title="Zoom In">+</Button>
-                  <Button variant="outline" size="sm" className="h-7 text-xs px-2 flex-shrink-0" onClick={handleZoomReset}>Reset</Button>
-                </div>
+                    {/* Zoom controls */}
+                    <div className="flex items-center gap-2 mt-2 w-full">
+                      <span className="text-xs text-muted-foreground flex-shrink-0">Zoom</span>
+                      <Button variant="outline" size="sm" className="h-7 w-7 p-0 flex-shrink-0" onClick={handleZoomOut} title="Zoom Out">−</Button>
+                      <span className="text-xs font-semibold tabular-nums text-center flex-1">{Math.round(zoomLevel * 100)}%</span>
+                      <Button variant="outline" size="sm" className="h-7 w-7 p-0 flex-shrink-0" onClick={handleZoomIn} title="Zoom In">+</Button>
+                      <Button variant="outline" size="sm" className="h-7 text-xs px-2 flex-shrink-0" onClick={handleZoomReset}>Reset</Button>
+                    </div>
+                  </>
+                )}
 
                 <Separator className="my-2" />
 
@@ -347,6 +355,44 @@ function App() {
               colors={dmcColors}
               onColorsChange={setDmcColors}
             />
+          </div>
+        )}
+
+        {/* Compact view/zoom toolbar shown above the pattern on mobile */}
+        {isMobile && currentImage && pattern && (
+          <div className="mobile-pattern-toolbar no-print">
+            <div className="flex flex-1 gap-1.5 min-w-[220px]">
+              <Button
+                variant={viewMode === 'color' ? 'default' : 'outline'}
+                size="sm"
+                className="flex-1 h-9 text-xs"
+                onClick={() => setViewMode('color')}
+              >
+                Color
+              </Button>
+              <Button
+                variant={viewMode === 'crossstitch' ? 'default' : 'outline'}
+                size="sm"
+                className="flex-1 h-9 text-xs"
+                onClick={() => setViewMode('crossstitch')}
+              >
+                Cross Stitch
+              </Button>
+              <Button
+                variant={viewMode === 'shape' ? 'default' : 'outline'}
+                size="sm"
+                className="flex-1 h-9 text-xs"
+                onClick={() => setViewMode('shape')}
+              >
+                Symbol
+              </Button>
+            </div>
+            <div className="flex flex-1 items-center gap-2 min-w-[180px]">
+              <Button variant="outline" size="sm" className="h-9 w-9 p-0 flex-shrink-0" onClick={handleZoomOut} title="Zoom Out">−</Button>
+              <span className="text-xs font-semibold tabular-nums text-center flex-1">{Math.round(zoomLevel * 100)}%</span>
+              <Button variant="outline" size="sm" className="h-9 w-9 p-0 flex-shrink-0" onClick={handleZoomIn} title="Zoom In">+</Button>
+              <Button variant="outline" size="sm" className="h-9 text-xs px-3 flex-shrink-0" onClick={handleZoomReset}>Reset</Button>
+            </div>
           </div>
         )}
 
